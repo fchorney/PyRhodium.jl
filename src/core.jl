@@ -18,12 +18,12 @@ end
 struct Parameter <: Wrapper
     pyo::PyObject
 
-    function Parameter(name::AbstractString, default_value::Any = nothing)
-        return new(rhodium.Parameter(name, default_value = default_value))
+    function Parameter(name::AbstractString, default_value::Any=nothing)
+        return new(rhodium.Parameter(name, default_value=default_value))
     end
 end
 
-Parameter(name::Symbol, default_value::Any = nothing) = Parameter(String(name), default_value)
+Parameter(name::Symbol, default_value::Any=nothing) = Parameter(String(name), default_value)
 
 Parameter(pair::Pair{Symbol,Any}) = Parameter(pair.first, pair.second)
 
@@ -53,16 +53,16 @@ abstract type Lever  <: Wrapper end
 struct IntegerLever <: Lever
     pyo::PyObject
 
-    function IntegerLever(name::AbstractString, min_value::Int, max_value::Int; length::Int = 1)
-        return new(rhodium.IntegerLever(name, min_value, max_value, length = length))
+    function IntegerLever(name::AbstractString, min_value::Int, max_value::Int; length::Int=1)
+        return new(rhodium.IntegerLever(name, min_value, max_value, length=length))
     end
 end
 
 struct RealLever <: Lever
     pyo::PyObject
 
-    function RealLever(name::AbstractString, min_value::Float64, max_value::Float64; length::Int = 1)
-        return new(rhodium.RealLever(name, min_value, max_value, length = length))
+    function RealLever(name::AbstractString, min_value::Float64, max_value::Float64; length::Int=1)
+        return new(rhodium.RealLever(name, min_value, max_value, length=length))
     end
 end
 
@@ -118,14 +118,14 @@ struct DataSet <: Wrapper
     end
 
     # A string argument is interpreted in the python func as a file to load
-    function DataSet(data::Union{AbstractString,AbstractArray} = nothing)
+    function DataSet(data::Union{AbstractString,AbstractArray}=nothing)
         new(rhodium.DataSet(data))
     end
 end
 
 Base.length(ds::DataSet) = length(ds.pyo)
 
-function Base.iterate(ds::DataSet, state = 1)
+function Base.iterate(ds::DataSet, state=1)
     if state > length(ds)
         return nothing
     else
@@ -145,8 +145,8 @@ end
 
 # TODO This was a method on Base.find previously, maybe it should extend
 # some other Base method?
-function find(ds::DataSet, expr; inverse = false)
-    return pycall(ds.pyo.find, PyObject, expr, inverse = inverse)
+function find(ds::DataSet, expr; inverse=false)
+    return pycall(ds.pyo.find, PyObject, expr, inverse=inverse)
 end
 
 # Create a NamedTuple type expression from the contents of the given dict,
@@ -180,7 +180,7 @@ function DataStructures.Dict(pydict::PyDict)
     return DataStructures.Dict(Symbol(k) => v for (k, v) in pydict)
 end
 
-function pandas_dataframe(ds::DataSet; include = nothing, exclude = nothing)
+function pandas_dataframe(ds::DataSet; include=nothing, exclude=nothing)
     # TBD: Convert directly to np.recarray? That's the end result
     # on the python side, so we'd avoid building 2 intermediate DFs.
     df = DataFrame(ds)
@@ -302,7 +302,7 @@ function evaluate(m::Model, policies::Vector)
     return DataSet(py_output)
 end
 
-function apply(ds::DataSet, expr; update = true)
+function apply(ds::DataSet, expr; update=true)
     res = pycall(ds.pyo.apply, PyVector, expr, update)
     return collect(res)
 end
@@ -321,27 +321,27 @@ function _add_brush(kwargs, brush)
     end
 end
 
-function scatter2d(m::Model, ds::DataSet; brush = nothing, kwargs...)
+function scatter2d(m::Model, ds::DataSet; brush=nothing, kwargs...)
     kwargs2 = _add_brush(kwargs, brush)
     return rhodium.scatter2d(m.pyo, ds.pyo; kwargs2...)
 end
 
-function scatter3d(m::Model, ds::DataSet; brush = nothing, kwargs...)
+function scatter3d(m::Model, ds::DataSet; brush=nothing, kwargs...)
     kwargs2 = _add_brush(kwargs, brush)
     return rhodium.scatter3d(m.pyo, ds.pyo; kwargs2...)
 end
 
-function pairs(m::Model, ds::DataSet; brush = nothing, kwargs...)
+function pairs(m::Model, ds::DataSet; brush=nothing, kwargs...)
     kwargs2 = _add_brush(kwargs, brush)
     return rhodium.pairs(m.pyo, ds.pyo; kwargs2...)
 end
 
-function parallel_coordinates(m::Model, ds::DataSet; brush = nothing, kwargs...)
+function parallel_coordinates(m::Model, ds::DataSet; brush=nothing, kwargs...)
     kwargs2 = _add_brush(kwargs, brush)
     return rhodium.parallel_coordinates(m.pyo, ds.pyo; kwargs2...)
 end
 
-function use_seaborn(style = "darkgrid")
+function use_seaborn(style="darkgrid")
     seaborn.set()
     seaborn.set_style(style)
 end

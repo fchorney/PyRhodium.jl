@@ -4,16 +4,16 @@ using Distributions
 using DataFrames
 using Random
 
-function lake_problem(;pollution_limit = nothing,
-         b = 0.42,       # decay rate for P in lake (0.42 = irreversible)
-         q = 2.0,        # recycling exponent
-         μ = 0.02,       # mean of natural inflows
-         σ = 0.001,      # standard deviation of natural inflows
-         α = 0.4,        # utility from pollution
-         δ = 0.98,       # future utility discount rate
-         nsamples = 100) # monte carlo sampling of natural inflows)
+function lake_problem(;pollution_limit=nothing,
+         b=0.42,       # decay rate for P in lake (0.42 = irreversible)
+         q=2.0,        # recycling exponent
+         μ=0.02,       # mean of natural inflows
+         σ=0.001,      # standard deviation of natural inflows
+         α=0.4,        # utility from pollution
+         δ=0.98,       # future utility discount rate
+         nsamples=100) # monte carlo sampling of natural inflows)
 
-    Pcrit = fzero(x->x^q / (1 + x^q) - b * x, 0.01, 1.5)
+    Pcrit = fzero(x -> x^q / (1 + x^q) - b * x, 0.01, 1.5)
     nvars = length(pollution_limit)
     X = zeros(nvars)
     average_daily_P = zeros(nvars)
@@ -57,7 +57,7 @@ set_responses!(m, [Response("max_P", :MINIMIZE),
                    Response("inertia", :MAXIMIZE),
                    Response("reliability", :MAXIMIZE)])
 
-set_levers!(m, [RealLever("pollution_limit", 0.0, 0.1, length = 100)])
+set_levers!(m, [RealLever("pollution_limit", 0.0, 0.1, length=100)])
 
 # output = optimize(m, "NSGAII", 1000)
 output = optimize(m, "NSGAII", 100)

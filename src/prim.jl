@@ -19,8 +19,8 @@ function show_tradeoff(box::PrimBox)
     return fig
 end
 
-function show_details(box::PrimBox, fig = nothing)
-    pycall(box.pyo[:show_details], PyObject, fig = fig)
+function show_details(box::PrimBox, fig=nothing)
+    pycall(box.pyo[:show_details], PyObject, fig=fig)
     nothing
 end
 
@@ -45,12 +45,12 @@ struct Prim <: Wrapper
     pyo::PyObject
 
     function Prim(x::DataSet, y::Vector;
-                  threshold = nothing, threshold_type = ">",
-                  obj_func = prim.lenient1,
-                  peel_alpha = 0.05, paste_alpha = 0.05, mass_min = 0.05,
-                  include = nothing, exclude = nothing, coi = nothing)
+                  threshold=nothing, threshold_type=">",
+                  obj_func=prim.lenient1,
+                  peel_alpha=0.05, paste_alpha=0.05, mass_min=0.05,
+                  include=nothing, exclude=nothing, coi=nothing)
 
-        pandasDF = pandas_dataframe(x; include = include, exclude = exclude)
+        pandasDF = pandas_dataframe(x; include=include, exclude=exclude)
 
         # Convert y into Vector{Bool} by matching category of interest
         # Note that classification and coi can be strings or symbols,
@@ -64,9 +64,9 @@ struct Prim <: Wrapper
         end
 
         prim = rhodium.Prim(pandasDF, y;
-                            threshold = threshold, threshold_type = threshold_type,
-                            obj_func = obj_func, peel_alpha = peel_alpha, paste_alpha = paste_alpha,
-                            mass_min = mass_min) # include=include, exclude=exclude, coi=coi)
+                            threshold=threshold, threshold_type=threshold_type,
+                            obj_func=obj_func, peel_alpha=peel_alpha, paste_alpha=paste_alpha,
+                            mass_min=mass_min) # include=include, exclude=exclude, coi=coi)
         return new(prim)
     end
 end
@@ -96,6 +96,6 @@ Arguments:
     exclude: optional list of str, the uncertainties that should
              be excluded from the rotation
 """
-function perform_pca(p::Prim, subsets::Dict = nothing, exclude = nothing)
-    p.pyo[:perform_pca](;subsets = subsets, exclude = exclude)
+function perform_pca(p::Prim, subsets::Dict=nothing, exclude=nothing)
+    p.pyo[:perform_pca](;subsets=subsets, exclude=exclude)
 end
